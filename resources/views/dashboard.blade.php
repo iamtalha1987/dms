@@ -3,7 +3,7 @@
 
     <div style="margin-bottom:1.5rem;border-radius:0.75rem;background:linear-gradient(to right,#4f46e5,#3730a3);padding:1.5rem;color:#fff;box-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1);" class="mb-6 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-800 p-6 text-white shadow-lg">
         <h1 style="margin:0;font-size:1.5rem;font-weight:700;">Welcome back, {{ Auth::user()->name }}</h1>
-        <p style="margin:0.25rem 0 0;font-size:0.875rem;opacity:0.9;">Manage domains, clients, renewals, and expiry alerts from one place.</p>
+        <p style="margin:0.25rem 0 0;font-size:0.875rem;opacity:0.9;">Talha  Manage domains, clients, renewals, and expiry alerts from one place.</p>
     </div>
 
     @if (count($cards))
