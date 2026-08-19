@@ -55,7 +55,7 @@
                         <tr class="border-t">
                             <td class="px-4 py-3">{{ $domain->domain_name }}</td>
                             <td class="px-4 py-3">{{ $domain->client?->name }}</td>
-                            <td class="px-4 py-3">{{ $domain->current_expiry_date->format('Y-m-d') }}</td>
+                            <td class="px-4 py-3">{{ $domain->current_expiry_date?->format('Y-m-d') ?? '—' }}</td>
                             <td class="px-4 py-3">{{ $domain->project_status }}</td>
                         </tr>
                     @empty

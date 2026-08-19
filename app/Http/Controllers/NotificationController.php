@@ -23,6 +23,10 @@ class NotificationController extends Controller
 
         $domain->load('client');
 
+        if (! $domain->current_expiry_date) {
+            return back()->with('error', 'This domain has no expiry date to notify about.');
+        }
+
         $recipient = $validated['recipient_type'] === 'client'
             ? $domain->client?->email
             : \App\Models\Setting::get('admin_notification_email');

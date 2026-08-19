@@ -31,30 +31,32 @@
                     <tr class="border-t">
                         <td class="px-4 py-3">{{ $domain->domain_name }}</td>
                         <td class="px-4 py-3">{{ $domain->client?->name }}</td>
-                        <td class="px-4 py-3">{{ $domain->current_expiry_date->format('Y-m-d') }}</td>
-                        <td class="px-4 py-3">{{ $domain->days_until_expiry }}</td>
+                        <td class="px-4 py-3">{{ $domain->current_expiry_date?->format('Y-m-d') ?? '—' }}</td>
+                        <td class="px-4 py-3">{{ $domain->days_until_expiry ?? '—' }}</td>
                         <td class="px-4 py-3">{{ $domain->domain_managed_by_us == 1 ? 'Yes' : 'No' }}</td>
                         <td class="px-4 py-3">{{ $domain->hosting_managed_by_us == 1 ? 'Yes' : 'No' }}</td>
                         <td class="px-4 py-3">{{ $domain->client_notified ? 'Yes' : 'No' }}</td>
                         <td class="px-4 py-3 space-x-2">
-                            @can('expiry.mark_notified')
-                                <form method="POST" action="{{ route('expiry.mark-notified', $domain) }}" class="inline">
-                                    @csrf
-                                    <button type="submit" class="text-indigo-600">Mark Notified</button>
-                                </form>
-                            @endcan
-                            @can('expiry.notify')
-                                <form method="POST" action="{{ route('expiry.notify', $domain) }}" class="inline">
-                                    @csrf
-                                    <input type="hidden" name="recipient_type" value="client" />
-                                    <button type="submit" class="text-indigo-600">Email Client</button>
-                                </form>
-                                <form method="POST" action="{{ route('expiry.notify', $domain) }}" class="inline">
-                                    @csrf
-                                    <input type="hidden" name="recipient_type" value="admin" />
-                                    <button type="submit" class="text-indigo-600">Email Admin</button>
-                                </form>
-                            @endcan
+                            @if ($domain->current_expiry_date)
+                                @can('expiry.mark_notified')
+                                    <form method="POST" action="{{ route('expiry.mark-notified', $domain) }}" class="inline">
+                                        @csrf
+                                        <button type="submit" class="text-indigo-600">Mark Notified</button>
+                                    </form>
+                                @endcan
+                                @can('expiry.notify')
+                                    <form method="POST" action="{{ route('expiry.notify', $domain) }}" class="inline">
+                                        @csrf
+                                        <input type="hidden" name="recipient_type" value="client" />
+                                        <button type="submit" class="text-indigo-600">Email Client</button>
+                                    </form>
+                                    <form method="POST" action="{{ route('expiry.notify', $domain) }}" class="inline">
+                                        @csrf
+                                        <input type="hidden" name="recipient_type" value="admin" />
+                                        <button type="submit" class="text-indigo-600">Email Admin</button>
+                                    </form>
+                                @endcan
+                            @endif
                         </td>
                     </tr>
                 @empty

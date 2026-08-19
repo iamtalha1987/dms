@@ -38,6 +38,10 @@ class SendDomainExpiryReminders extends Command
 
     protected function sendIfNotRecent(Domain $domain, string $type, string $recipient, int $days): void
     {
+        if (! $domain->current_expiry_date) {
+            return;
+        }
+
         $recent = NotificationLog::query()
             ->where('domain_id', $domain->id)
             ->where('type', $type)

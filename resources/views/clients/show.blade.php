@@ -22,7 +22,7 @@
                 @forelse ($client->domains as $domain)
                     <tr class="border-t">
                         <td class="px-4 py-3"><a href="{{ route('domains.show', $domain) }}" class="text-indigo-600">{{ $domain->domain_name }}</a></td>
-                        <td class="px-4 py-3">{{ $domain->current_expiry_date->format('Y-m-d') }}</td>
+                        <td class="px-4 py-3">{{ $domain->current_expiry_date?->format('Y-m-d') ?? '—' }}</td>
                         <td class="px-4 py-3">{{ $domain->project_status }}</td>
                     </tr>
                 @empty

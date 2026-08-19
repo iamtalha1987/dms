@@ -15,11 +15,19 @@
 
     <div class="bg-white rounded-lg shadow-sm p-6 mb-6 grid md:grid-cols-2 gap-2 text-sm">
         <p><strong>Client:</strong> {{ $domain->client?->name }}</p>
-        <p><strong>Expiry:</strong> {{ $domain->current_expiry_date->format('Y-m-d') }}</p>
-        <p><strong>Purchase:</strong> {{ $domain->purchase_date->format('Y-m-d') }} — {{ format_money($domain->purchase_price) }}</p>
         <p><strong>Supplier:</strong> {{ $domain->supplier?->name ?? $domain->supplier_other ?? '—' }}</p>
         <p><strong>Managed:</strong> Domain {{ $domain->domain_managed_by_us ? 'Yes' : 'No' }}, Hosting {{ $domain->hosting_managed_by_us ? 'Yes' : 'No' }}</p>
         <p><strong>Status:</strong> {{ $domain->project_status }}</p>
+        @if ($domain->domain_managed_by_us)
+            <p><strong>Expiry:</strong> {{ $domain->current_expiry_date?->format('Y-m-d') ?? '—' }}</p>
+            <p><strong>Purchase:</strong> {{ $domain->purchase_date?->format('Y-m-d') ?? '—' }} — {{ format_money($domain->purchase_price) }}</p>
+        @else
+            <p class="text-slate-500"><strong>Purchase / Renewal:</strong> Not applicable — domain isn't managed by us.</p>
+        @endif
+        @if ($domain->hosting_managed_by_us)
+            <p><strong>Hosting Created:</strong> {{ $domain->hosting_creation_date?->format('Y-m-d') ?? '—' }}</p>
+            <p><strong>Hosting Expiry:</strong> {{ $domain->hosting_lifetime ? 'Lifetime' : ($domain->hosting_expiry_date?->format('Y-m-d') ?? '—') }}</p>
+        @endif
         <p class="md:col-span-2"><strong>Remarks:</strong> {{ $domain->remarks ?? '—' }}</p>
     </div>
 

@@ -22,6 +22,9 @@ class Domain extends Model
         'supplier_other',
         'domain_managed_by_us',
         'hosting_managed_by_us',
+        'hosting_creation_date',
+        'hosting_lifetime',
+        'hosting_expiry_date',
         'project_status',
         'remarks',
         'created_by',
@@ -37,6 +40,9 @@ class Domain extends Model
             'purchase_price' => 'decimal:2',
             'domain_managed_by_us' => 'boolean',
             'hosting_managed_by_us' => 'boolean',
+            'hosting_creation_date' => 'date',
+            'hosting_lifetime' => 'boolean',
+            'hosting_expiry_date' => 'date',
             'client_notified' => 'boolean',
             'client_notified_at' => 'datetime',
         ];
@@ -69,11 +75,15 @@ class Domain extends Model
 
     public function getIsExpiredAttribute(): bool
     {
-        return $this->current_expiry_date->isPast();
+        return (bool) $this->current_expiry_date?->isPast();
     }
 
-    public function getDaysUntilExpiryAttribute(): int
+    public function getDaysUntilExpiryAttribute(): ?int
     {
+        if (! $this->current_expiry_date) {
+            return null;
+        }
+
         return (int) now()->startOfDay()->diffInDays($this->current_expiry_date, false);
     }
 

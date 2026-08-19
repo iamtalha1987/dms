@@ -54,8 +54,6 @@ class DomainController extends Controller
     {
         $validated = $this->validateDomain($request);
         $validated['created_by'] = auth()->id();
-        $validated['domain_managed_by_us'] = $request->boolean('domain_managed_by_us');
-        $validated['hosting_managed_by_us'] = $request->boolean('hosting_managed_by_us');
 
         Domain::create($validated);
 
@@ -81,8 +79,6 @@ class DomainController extends Controller
     public function update(Request $request, Domain $domain): RedirectResponse
     {
         $validated = $this->validateDomain($request, $domain->id);
-        $validated['domain_managed_by_us'] = $request->boolean('domain_managed_by_us');
-        $validated['hosting_managed_by_us'] = $request->boolean('hosting_managed_by_us');
 
         $domain->update($validated);
 
@@ -98,16 +94,48 @@ class DomainController extends Controller
 
     protected function validateDomain(Request $request, ?int $domainId = null): array
     {
-        return $request->validate([
+        // A domain that isn't managed by us doesn't need a purchase/renewal
+        // date. If hosting is managed by us instead, we collect the hosting
+        // creation date (and expiry date, unless hosting is lifetime) in
+        // place of those fields.
+        $domainManaged = $request->boolean('domain_managed_by_us');
+        $hostingManaged = $request->boolean('hosting_managed_by_us');
+        $hostingLifetime = $hostingManaged && $request->boolean('hosting_lifetime');
+
+        $validated = $request->validate([
             'client_id' => ['required', 'exists:clients,id'],
             'domain_name' => ['required', 'string', 'max:255', 'unique:domains,domain_name,' . $domainId],
-            'purchase_date' => ['required', 'date'],
+            'purchase_date' => [$domainManaged ? 'required' : 'nullable', 'date'],
             'purchase_price' => ['required', 'numeric', 'min:0'],
-            'current_expiry_date' => ['required', 'date'],
+            'current_expiry_date' => [$domainManaged ? 'required' : 'nullable', 'date'],
             'supplier_id' => ['nullable', 'exists:suppliers,id'],
             'supplier_other' => ['nullable', 'string', 'max:255'],
             'project_status' => ['required', 'in:active,inactive,deactivated'],
+            'hosting_creation_date' => [$hostingManaged ? 'required' : 'nullable', 'date'],
+            'hosting_lifetime' => ['nullable', 'boolean'],
+            'hosting_expiry_date' => [$hostingManaged && ! $hostingLifetime ? 'required' : 'nullable', 'date'],
             'remarks' => ['nullable', 'string'],
         ]);
+
+        $validated['domain_managed_by_us'] = $domainManaged;
+        $validated['hosting_managed_by_us'] = $hostingManaged;
+        $validated['hosting_lifetime'] = $hostingLifetime;
+
+        // Keep stored data clean: don't persist dates for things that
+        // aren't being managed, and don't persist a hosting expiry date
+        // when hosting is lifetime.
+        if (! $domainManaged) {
+            $validated['purchase_date'] = null;
+            $validated['current_expiry_date'] = null;
+        }
+
+        if (! $hostingManaged) {
+            $validated['hosting_creation_date'] = null;
+            $validated['hosting_expiry_date'] = null;
+        } elseif ($hostingLifetime) {
+            $validated['hosting_expiry_date'] = null;
+        }
+
+        return $validated;
     }
 }

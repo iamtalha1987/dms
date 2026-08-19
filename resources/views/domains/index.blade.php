@@ -28,7 +28,7 @@
                     <tr class="border-t {{ $domain->is_expired ? 'bg-red-50' : '' }}">
                         <td class="px-4 py-3">{{ $domain->domain_name }}</td>
                         <td class="px-4 py-3">{{ $domain->client?->name }}</td>
-                        <td class="px-4 py-3">{{ $domain->current_expiry_date->format('Y-m-d') }}</td>
+                        <td class="px-4 py-3">{{ $domain->current_expiry_date?->format('Y-m-d') ?? '—' }}</td>
                         <td class="px-4 py-3">{{ $domain->supplier?->name ?? $domain->supplier_other ?? '—' }}</td>
                         <td class="px-4 py-3">{{ $domain->domain_managed_by_us == 1 ? 'Yes' : 'No' }}</td>
                         <td class="px-4 py-3">{{ $domain->hosting_managed_by_us == 1 ? 'Yes' : 'No' }}</td>
