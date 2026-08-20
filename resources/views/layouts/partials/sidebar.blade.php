@@ -3,7 +3,7 @@
     :class="{ 'is-open': sidebarOpen }"
 >
     <div style="display:flex;align-items:center;gap:0.75rem;padding:0 1.25rem;height:4rem;border-bottom:1px solid rgba(148,163,184,0.2);flex-shrink:0;">
-        <div style="width:2.25rem;height:2.25rem;border-radius:0.5rem;background:#6366f1;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.875rem;">D</div>
+        <div style="width:2.25rem;height:2.25rem;border-radius:0.5rem;background:#6366f1;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.875rem;"><img src="{{ asset('favicon.png') }}" alt=""></div>
         <div>
             <p style="margin:0;font-weight:600;font-size:0.875rem;line-height:1.25;">{{ config('app.name', 'DMS') }}</p>
             <p style="margin:0;font-size:0.75rem;color:#94a3b8;">Domain Management</p>
